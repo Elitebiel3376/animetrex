@@ -16,6 +16,9 @@
   .btn-primary{background:var(--accent);color:#000;box-shadow:0 6px 18px rgba(255,45,45,0.18)}
   .btn-secondary{background:#222;color:#fff;border:1px solid rgba(255,255,255,0.04)}
   .msg{margin-top:8px;color:#ffd700;font-weight:700;text-align:center}
+  .admin-toggle{margin-top:12px;text-align:center}
+  .admin-panel{margin-top:12px;padding:12px;border-radius:8px;background:#070707;border:1px solid rgba(255,255,255,0.02);display:none}
+  .admin-panel input{margin-top:8px}
 </style>
 </head>
 <body>
@@ -34,11 +37,29 @@
     <button class="btn-secondary" onclick="criarSenha()">Criar senha</button>
   </div>
 
+  <!-- Botão Admin -->
+  <div class="admin-toggle">
+    <button class="btn-secondary" onclick="toggleAdmin()">Admin</button>
+  </div>
+
+  <div id="adminPanel" class="admin-panel" aria-hidden="true">
+    <div style="font-size:13px;color:#ddd">Acesso Administrativo</div>
+    <input id="adminLogin" type="text" placeholder="Login Admin (ex.: Administração)">
+    <input id="adminPass" type="password" placeholder="Senha Admin">
+    <div class="row" style="margin-top:10px">
+      <button class="btn-primary" onclick="adminLogin()">Entrar Admin</button>
+      <button class="btn-secondary" onclick="toggleAdmin()">Fechar</button>
+    </div>
+    <div class="msg" style="margin-top:8px;color:#ffd700;font-size:12px">
+      Login Admin: <strong>Administração</strong> — Senha: <strong>1234</strong>
+    </div>
+  </div>
+
   <div id="msg" class="msg" style="display:none"></div>
 </div>
 
 <script>
-  // 45 senhas pré-geradas (8 dígitos cada)
+  // Senhas válidas
   const senhasValidas = [
     "48392017","59203841","71928304","83047519","94820375",
     "10293847","56473829","37482910","48592037","19283746",
@@ -51,41 +72,49 @@
     "29384758","83746523","10274640","56473824","91827368"
   ];
 
-  function lerAtivos(){
-    return JSON.parse(localStorage.getItem('senhasAtivas')||'[]');
-  }
-
-  function salvarAtivo(user, senha){
-    let ativos = lerAtivos();
-    // Bloqueia se a senha já estiver em uso por outro login
-    if(ativos.find(a=>a.senha===senha && a.user!==user)){
-      return {ok:false, reason:'Senha já em uso por outro usuário!'};
-    }
-    // Atualiza ou adiciona
-    const idx = ativos.findIndex(a=>a.user===user);
-    const entry = {user, senha, ts:Date.now()};
-    if(idx>=0) ativos[idx] = entry; else ativos.push(entry);
-    localStorage.setItem('senhasAtivas', JSON.stringify(ativos));
-    localStorage.setItem('usuarioLogado', user);
-    return {ok:true};
-  }
-
   function entrar(){
     const login = document.getElementById('login').value.trim();
     const senha = document.getElementById('senha').value.trim();
     const msgEl = document.getElementById('msg');
     msgEl.style.display='none';
-    if(!login || !senha){ msgEl.textContent='Preencha login e senha'; msgEl.style.display='block'; return; }
-    if(!senhasValidas.includes(senha)){ msgEl.textContent='Senha inválida'; msgEl.style.display='block'; return; }
-    const res = salvarAtivo(login, senha);
-    if(!res.ok){ msgEl.textContent=res.reason; msgEl.style.display='block'; return; }
-    // sucesso -> vai pro home
-    window.location.href = 'home.html';
+    if(!login || !senha){ 
+      msgEl.textContent='Preencha login e senha'; 
+      msgEl.style.display='block'; 
+      return; 
+    }
+    if(!senhasValidas.includes(senha)){ 
+      msgEl.textContent='Senha inválida'; 
+      msgEl.style.display='block'; 
+      return; 
+    }
+    // Redireciona para home
+    window.location.href='home.html';
   }
 
   function criarSenha(){
     const url = 'https://wa.me/+5521974277322?text=Olá!%20Quero%20uma%20senha%20para%20acessar%20o NeonFlix';
     window.open(url,'_blank');
+  }
+
+  function toggleAdmin(){
+    const panel = document.getElementById('adminPanel');
+    if(panel.style.display === 'block'){
+      panel.style.display='none';
+      panel.setAttribute('aria-hidden','true');
+    } else {
+      panel.style.display='block';
+      panel.setAttribute('aria-hidden','false');
+    }
+  }
+
+  function adminLogin(){
+    const aUser = document.getElementById('adminLogin').value.trim();
+    const aPass = document.getElementById('adminPass').value.trim();
+    if(aUser === 'Administração' && aPass === '1234'){
+      window.location.href='admin.html';
+    } else {
+      alert('Credenciais admin incorretas!');
+    }
   }
 </script>
 
