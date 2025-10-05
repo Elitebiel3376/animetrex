@@ -1,286 +1,268 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>NEONFLIX — Admin (Gerar usuário)</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NEONFLIX — Admin (Atribuir senhas prontas)</title>
 <style>
-  :root{
-    --bg:#000;
-    --card:#0b0b0b;
-    --accent:#ff2d2d;
-    --text:#fff;
-  }
-  body{
-    margin:0;
-    font-family:Inter,Arial,sans-serif;
-    background:linear-gradient(180deg,#000 0%, #070707 100%);
-    color:var(--text);
-    -webkit-font-smoothing:antialiased;
-  }
-  header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:18px 26px;
-    border-bottom:3px solid rgba(255,45,45,0.06);
-  }
-  .logo{
-    color:var(--accent);
-    font-weight:800;
-    text-shadow:0 0 10px rgba(255,45,45,0.22);
-    letter-spacing:2px;
-  }
-  main{max-width:1100px;margin:24px auto;padding:0 18px;}
-  .grid{
-    display:grid;
-    grid-template-columns: 360px 1fr;
-    gap:18px;
-  }
-
-  .card{
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    padding:16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.6);
-  }
-
-  label{display:block;font-size:13px;margin-bottom:6px;color:#ddd}
-  input[type="text"]{
-    width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);
-    background:#0f0f0f;color:#fff;font-size:14px;box-sizing:border-box;
-  }
-  .row{display:flex;gap:8px;margin-top:10px;}
-  button{
-    background:var(--accent);color:#000;border:none;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer;
-    box-shadow:0 6px 18px rgba(255,45,45,0.14);
-  }
-  button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(255,45,45,0.08);box-shadow:none;}
-  .generated{
-    margin-top:12px;padding:10px;border-radius:8px;background:#070707;border:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;
-  }
-  .small{font-size:13px;color:#bbb}
-  .list-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
+  :root{--bg:#000;--card:#0b0b0b;--accent:#ff2d2d;--text:#fff}
+  body{margin:0;background:linear-gradient(180deg,#000,#070707);color:var(--text);font-family:Arial,Helvetica,sans-serif;padding:20px}
+  .wrap{max-width:1100px;margin:18px auto;display:grid;grid-template-columns:360px 1fr;gap:16px}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+  h1{color:var(--accent);margin:0 0 8px;font-size:18px}
+  .small{color:#bbb;font-size:13px;margin-bottom:8px}
+  label{display:block;font-size:13px;color:#ddd;margin-top:8px}
+  input[type="text"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#0f0f0f;color:#fff}
+  select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#0f0f0f;color:#fff}
+  .row{display:flex;gap:8px;margin-top:12px}
+  button{padding:10px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+  .primary{background:var(--accent);color:#000}
+  .ghost{background:transparent;border:1px solid rgba(255,45,45,0.12);color:var(--accent)}
+  .muted{color:#999;font-size:13px;margin-top:8px}
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
   th{color:#ddd;font-weight:700;font-size:13px}
   .actions button{margin-right:6px;padding:6px 8px;border-radius:8px;border:none;cursor:pointer}
   .danger{background:#611010;color:#fff}
-  .muted{color:#999;font-size:13px}
-  .search{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#0f0f0f;color:#fff}
+  .available-list{max-height:240px;overflow:auto;padding:6px;border-radius:8px;background:#070707;border:1px solid rgba(255,255,255,0.02)}
+  .pwd{display:flex;justify-content:space-between;align-items:center;padding:6px;border-bottom:1px dashed rgba(255,255,255,0.02)}
+  .pwd .val{font-weight:700;letter-spacing:2px}
   .tools{display:flex;gap:8px;align-items:center}
-  @media (max-width:900px){
-    .grid{grid-template-columns:1fr; }
-  }
+  @media (max-width:920px){ .wrap{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">NEONFLIX — Admin</div>
-  <div class="muted">Painel local • use com cuidado</div>
-</header>
+<div class="wrap">
+  <!-- esquerda: atribuir -->
+  <div class="card">
+    <h1>Gerenciar senhas prontas</h1>
+    <div class="small">Digite o login (nome da pessoa), selecione uma senha disponível e clique em Atribuir.</div>
 
-<main>
-  <div class="grid">
-    <!-- left: criar usuário -->
-    <div class="card">
-      <h3 style="margin:0 0 8px;color:var(--accent)">Criar novo usuário</h3>
-      <div class="small">Digite só o login (ex.: lexa123). A senha será gerada com 8 números.</div>
+    <label>Login (nome da pessoa)</label>
+    <input id="inputLogin" type="text" placeholder="ex.: lexa123">
 
-      <div style="margin-top:12px">
-        <label for="newLogin">Login</label>
-        <input id="newLogin" type="text" placeholder="ex.: lexa123" autocomplete="off" />
-      </div>
+    <label style="margin-top:10px">Escolha uma senha disponível</label>
+    <select id="selectPwd"><option>-- carregando --</option></select>
 
-      <div class="row">
-        <button id="btnGenCreate">Gerar senha e criar</button>
-        <button class="ghost" id="btnGenOnly">Gerar só senha</button>
-      </div>
-
-      <div id="generatedBox" class="generated" style="display:none;">
-        <div>
-          <div class="small">Senha gerada</div>
-          <div id="genPassword" style="font-weight:800;font-size:18px;letter-spacing:2px"></div>
-          <div class="small" style="margin-top:6px;color:#999">Copie e entregue para o usuário</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <button id="btnCopy">Copiar</button>
-          <button class="ghost" id="btnClear">Limpar</button>
-        </div>
-      </div>
-
-      <div style="margin-top:14px">
-        <div class="small">Opções:</div>
-        <div class="row" style="margin-top:8px">
-          <button id="btnExport">Exportar CSV</button>
-          <button class="ghost" id="btnClearAll">Apagar todos</button>
-        </div>
-      </div>
-
+    <div class="row" style="margin-top:12px">
+      <button id="btnAssign" class="primary">Atribuir senha ao login</button>
+      <button id="btnReset" class="ghost">Resetar tudo</button>
     </div>
 
-    <!-- right: lista -->
-    <div class="card">
-      <div class="list-header">
-        <h3 style="margin:0;color:var(--accent)">Usuários criados</h3>
-        <div class="tools">
-          <input id="search" class="search" placeholder="Buscar login..." />
-        </div>
-      </div>
+    <div class="row" style="margin-top:10px">
+      <button id="btnCopyAvailable" class="ghost">Copiar senhas disponíveis</button>
+      <button id="btnExport" class="ghost">Exportar CSV (usuários)</button>
+    </div>
 
-      <div id="tableWrap"></div>
-      <div id="empty" class="muted" style="display:none;padding:12px;text-align:center">Nenhum usuário criado.</div>
+    <div class="muted">Ao atribuir: grava em <code>usuarios</code> (obj JSON) e marca a senha como usada em <code>pwdsData</code>.</div>
+
+    <div style="margin-top:12px">
+      <div style="font-weight:700;margin-bottom:6px">Senhas disponíveis</div>
+      <div id="availableBox" class="available-list"></div>
     </div>
   </div>
-</main>
+
+  <!-- direita: lista de usuários -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1>Usuários atribuídos</h1>
+      <div class="tools">
+        <input id="search" type="text" placeholder="Buscar login..." style="padding:8px;border-radius:8px;background:#0f0f0f;border:1px solid rgba(255,255,255,0.03);color:#fff">
+        <button id="btnRefresh" class="ghost">Atualizar</button>
+      </div>
+    </div>
+
+    <div id="tableWrap"></div>
+    <div id="empty" class="muted" style="display:none">Nenhum usuário atribuído.</div>
+
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button id="btnClearUsers" class="danger">Apagar todos usuários</button>
+      <button id="btnResetPwds" class="ghost">Regenerar 45 senhas</button>
+    </div>
+
+    <div class="muted" style="margin-top:12px">Obs: isto altera apenas o <code>localStorage</code> do navegador onde você abrir este arquivo.</div>
+  </div>
+</div>
 
 <script>
 /*
-  Admin UI — armazenamento:
-   - chave localStorage: 'usuarios' -> objeto { login: senha, ... }
-   - chave opcional: 'usuariosAtivos' não tocada aqui (usada no login)
+ Preload: 45 senhas já prontas (8 dígitos).
+ Keys:
+  - 'pwdsData' : { available: [...], used: [...] }
+  - 'usuarios' : { login: senha, ... }
 */
 
-// helpers
-function readUsers(){
-  try {
-    const raw = localStorage.getItem('usuarios') || '{}';
-    return JSON.parse(raw);
-  } catch(e) { return {}; }
+const PWDS_KEY = 'pwdsData';
+const USERS_KEY = 'usuarios';
+
+// PRESET: 45 senhas prontas (unique)
+const PRESET_PWDS = [
+"48291035","19384756","92837461","56473829","81726354",
+"10293847","67584930","29384756","91827364","37485920",
+"56109283","84736291","23049587","10928374","91827345",
+"67584912","38475629","10293846","29384712","91827309",
+"56473819","84736205","23049562","10928390","91827381",
+"67584923","38475610","10293857","29384769","91827342",
+"45012367","55123478","66234589","77345690","88456701",
+"99567812","10678923","21789034","32890145","43901256",
+"54012367","65123478","76234589","87345690","98456701"
+];
+
+// util helpers
+function readPwds(){
+  try{ const raw = localStorage.getItem(PWDS_KEY); if(!raw) return null; return JSON.parse(raw); }
+  catch(e){ return null; }
 }
-function writeUsers(obj){
-  localStorage.setItem('usuarios', JSON.stringify(obj));
+function writePwds(obj){ localStorage.setItem(PWDS_KEY, JSON.stringify(obj)); }
+function readUsers(){ try{ return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); } catch(e){ return {}; } }
+function writeUsers(obj){ localStorage.setItem(USERS_KEY, JSON.stringify(obj)); }
+
+function ensurePwds(){
+  const existing = readPwds();
+  if(existing && Array.isArray(existing.available) && Array.isArray(existing.used)) return existing;
+  const data = { available: PRESET_PWDS.slice(), used: [] };
+  writePwds(data);
+  return data;
 }
-function gen8nums(){
-  let s = '';
-  for(let i=0;i<8;i++) s += String(Math.floor(Math.random()*10));
-  return s;
-}
-function showGenerated(pwd){
-  document.getElementById('generatedBox').style.display = 'flex';
-  document.getElementById('genPassword').textContent = pwd;
-}
-function hideGenerated(){
-  document.getElementById('generatedBox').style.display = 'none';
-  document.getElementById('genPassword').textContent = '';
-}
-function sanitizeLogin(v){
-  return String(v || '').trim();
-}
-function renderTable(filter=''){
-  const obj = readUsers();
-  const keys = Object.keys(obj).sort();
-  if(filter) {
-    const f = filter.toLowerCase();
-    keys = keys.filter(k => k.toLowerCase().includes(f));
-  }
-  const wrap = document.getElementById('tableWrap');
-  if(keys.length === 0){
-    wrap.innerHTML = '';
-    document.getElementById('empty').style.display = 'block';
+
+function renderAvailable(){
+  const data = ensurePwds();
+  const box = document.getElementById('availableBox');
+  const sel = document.getElementById('selectPwd');
+  box.innerHTML = ''; sel.innerHTML = '';
+  if(!data.available.length){
+    box.innerHTML = '<div class="muted">Nenhuma senha disponível</div>';
+    sel.innerHTML = '<option>-- sem senhas --</option>';
     return;
   }
+  data.available.forEach(p=>{
+    const div = document.createElement('div');
+    div.className = 'pwd';
+    div.innerHTML = `<div class="val">${p}</div><div><button onclick="copyText('${p}')">Copiar</button></div>`;
+    box.appendChild(div);
+    const opt = document.createElement('option'); opt.value = p; opt.textContent = p;
+    sel.appendChild(opt);
+  });
+}
+
+function renderUsers(filter=''){
+  const users = readUsers();
+  const keys = Object.keys(users).sort();
+  const wrap = document.getElementById('tableWrap');
+  const f = (filter||'').trim().toLowerCase();
+  const filtered = keys.filter(k => !f || k.toLowerCase().includes(f));
+  if(filtered.length === 0){ wrap.innerHTML = ''; document.getElementById('empty').style.display = 'block'; return; }
   document.getElementById('empty').style.display = 'none';
-  let html = `<table><thead><tr><th>Login</th><th>Senha</th><th style="width:170px">Ações</th></tr></thead><tbody>`;
-  keys.forEach(k=>{
-    const pwd = obj[k];
-    html += `<tr>
-      <td><strong>${escapeHtml(k)}</strong></td>
-      <td class="muted">${escapeHtml(pwd)}</td>
-      <td class="actions">
-        <button onclick="copyPwd('${escapeJs(k)}')">Copiar</button>
-        <button onclick="deleteUser('${escapeJs(k)}')" class="danger">Apagar</button>
-      </td>
-    </tr>`;
+  let html = `<table><thead><tr><th>Login</th><th>Senha</th><th>Ações</th></tr></thead><tbody>`;
+  filtered.forEach(k=>{
+    html += `<tr><td><strong>${escapeHtml(k)}</strong></td><td>${escapeHtml(users[k])}</td>
+      <td><button onclick="copyUser('${escapeJs(k)}')">Copiar</button>
+      <button onclick="removeUser('${escapeJs(k)}')" class="danger">Remover</button></td></tr>`;
   });
   html += `</tbody></table>`;
   wrap.innerHTML = html;
 }
 
 // actions
-document.getElementById('btnGenOnly').addEventListener('click', ()=>{
-  const pwd = gen8nums();
-  showGenerated(pwd);
-});
-document.getElementById('btnGenCreate').addEventListener('click', ()=>{
-  const loginInput = sanitizeLogin(document.getElementById('newLogin').value);
-  if(!loginInput){
-    alert('Digite um login (ex.: lexa123)');
-    return;
-  }
+function copyText(t){ navigator.clipboard.writeText(t).then(()=> alert('Copiado: ' + t)); }
+function copyUser(login){ const users = readUsers(); if(!users[login]) return alert('Usuário não encontrado'); copyText(`${login},${users[login]}`); }
+
+document.getElementById('btnAssign').addEventListener('click', ()=>{
+  const login = (document.getElementById('inputLogin').value||'').trim();
+  const sel = document.getElementById('selectPwd');
+  const pwd = sel.value;
+  if(!login){ alert('Digite o login / nome da pessoa.'); return; }
+  if(!pwd){ alert('Escolha uma senha disponível.'); return; }
   const users = readUsers();
-  if(users[loginInput]){
-    alert('Login já existe. Escolha outro ou apague o existente.');
-    return;
-  }
-  const pwd = gen8nums();
-  users[loginInput] = pwd;
+  if(users[login]){ alert('Este login já existe. Escolha outro nome ou remova o existente.'); return; }
+  // assign
+  users[login] = pwd;
   writeUsers(users);
-  showGenerated(pwd);
-  document.getElementById('newLogin').value = '';
-  renderTable(document.getElementById('search').value);
+  // move pwd to used
+  const data = ensurePwds();
+  data.available = data.available.filter(p=>p!==pwd);
+  data.used.push(pwd);
+  writePwds(data);
+  document.getElementById('inputLogin').value = '';
+  renderAvailable(); renderUsers(document.getElementById('search').value);
+  alert(`Senha ${pwd} atribuída a ${login}.`);
 });
 
-// copiar senha gerada
-document.getElementById('btnCopy').addEventListener('click', ()=>{
-  const text = document.getElementById('genPassword').textContent;
-  if(!text) return;
-  navigator.clipboard.writeText(text).then(()=> alert('Senha copiada.'));
+// copy available
+document.getElementById('btnCopyAvailable').addEventListener('click', ()=>{
+  const data = ensurePwds();
+  if(!data.available.length) return alert('Nenhuma senha disponível');
+  navigator.clipboard.writeText(data.available.join('\n')).then(()=> alert('Senhas disponíveis copiadas.'));
 });
-document.getElementById('btnClear').addEventListener('click', ()=> hideGenerated());
 
-// apagar usuario
-function deleteUser(login){
-  if(!confirm(`Apagar usuário ${login}?`)) return;
-  const users = readUsers();
-  delete users[login];
-  writeUsers(users);
-  renderTable(document.getElementById('search').value);
-}
-
-// copiar senha de usuário na tabela
-function copyPwd(login){
-  const users = readUsers();
-  if(!users[login]) { alert('Usuário não encontrado'); return; }
-  navigator.clipboard.writeText(users[login]).then(()=> alert('Senha copiada para ' + login));
-}
-
-// export CSV
+// export CSV (users)
 document.getElementById('btnExport').addEventListener('click', ()=>{
   const users = readUsers();
   const keys = Object.keys(users);
-  if(keys.length === 0){ alert('Nenhum usuário para exportar'); return; }
+  if(keys.length===0){ alert('Nenhum usuário atribuído'); return; }
   let csv = 'login,senha\n';
   keys.forEach(k=> csv += `${k},${users[k]}\n`);
-  // força download
-  const blob = new Blob([csv], {type: 'text/csv'});
+  const blob = new Blob([csv], {type:'text/csv'});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'usuarios_neonflix.csv'; document.body.appendChild(a); a.click(); a.remove();
+  const a = document.createElement('a'); a.href=url; a.download='usuarios_assigned.csv'; document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
 });
 
-// limpar tudo
-document.getElementById('btnClearAll').addEventListener('click', ()=>{
-  if(!confirm('Apagar TODOS os usuários criados?')) return;
+// remove user & release pwd
+function removeUser(login){
+  if(!confirm(`Remover usuário ${login} e liberar a senha?`)) return;
+  const users = readUsers();
+  const pwd = users[login];
+  delete users[login];
+  writeUsers(users);
+  const data = ensurePwds();
+  const ix = data.used.indexOf(pwd);
+  if(ix !== -1) data.used.splice(ix,1);
+  if(!data.available.includes(pwd)) data.available.unshift(pwd);
+  writePwds(data);
+  renderAvailable(); renderUsers(document.getElementById('search').value);
+}
+
+// clear users
+document.getElementById('btnClearUsers').addEventListener('click', ()=>{
+  if(!confirm('Apagar TODOS os usuários atribuídos?')) return;
   writeUsers({});
-  hideGenerated();
-  renderTable();
+  renderUsers();
+  alert('Usuários removidos.');
 });
 
-// limpar todos via botão
-document.getElementById('btnClearAll').addEventListener('click', ()=>{});
-
-// busca
-document.getElementById('search').addEventListener('input', (e)=>{
-  renderTable(e.target.value);
+// reset pwds: regenerate from PRESET (restore preset list and free used)
+document.getElementById('btnResetPwds').addEventListener('click', ()=>{
+  if(!confirm('Restaurar o conjunto PRESET de 45 senhas e liberar todas?')) return;
+  const data = { available: PRESET_PWDS.slice(), used: [] };
+  writePwds(data);
+  renderAvailable();
+  alert('Senhas restauradas.');
 });
 
-// util helpers
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+// reset all (clear both)
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  if(!confirm('Apagar tudo (usuários + senhas usadas) e restaurar PRESET?')) return;
+  writeUsers({});
+  const data = { available: PRESET_PWDS.slice(), used: [] };
+  writePwds(data);
+  renderAvailable(); renderUsers();
+  alert('Reset completo realizado.');
+});
+
+// search / refresh
+document.getElementById('search').addEventListener('input',(e)=> renderUsers(e.target.value));
+document.getElementById('btnRefresh').addEventListener('click', ()=> { renderAvailable(); renderUsers(); });
+
+// helpers
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function escapeJs(s){ return String(s).replace(/'/g,"\\'"); }
 
-// inicializa UI
-renderTable();
+ensurePwds();
+renderAvailable();
+renderUsers();
 </script>
 </body>
 </html>
+
